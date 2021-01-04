@@ -1,3 +1,5 @@
 # Profanity Filter
 
-A description of this package.
+A swift library that finds and mask profanities in strings.
+
+
