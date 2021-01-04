@@ -7,22 +7,55 @@ public class ProfanityFilter {
     
     private let whiteList: [String]?
     
-    public init(blackList: [String], whiteList: [String]? = nil) {
+    public init(blackList: [String] = BlackList.defaultList, whiteList: [String]? = nil) {
         self.blackList = blackList
         self.whiteList = whiteList
     }
     
     public func containsProfanity(text: String) -> ProfanityResult {
         do {
-            let regex = try NSRegularExpression(pattern: "[^!@#$%^&*]*\(getProfanityList().map { "(\(NSRegularExpression.escapedPattern(for: $0)))" } .joined(separator: "|"))[^!@#$%^&*]*", options: [.caseInsensitive])
-            let matches = regex.matches(in: text,
+            let rgx = try regex()
+            let matches = rgx.matches(in: text,
                                         range: NSRange(text.startIndex..., in: text))
             return ProfanityResult(profanities: matches.map {
                 String(text[Range($0.range, in: text)!])
             })
-        } catch _ {
+        } catch {
             return ProfanityResult(profanities: [])
         }
+    }
+    
+    public func maskProfanity(text: String) -> String {
+        do {
+            let rgx = try regex()
+            let matches = rgx.matches(in: text,
+                                        range: NSRange(text.startIndex..., in: text))
+            
+            var new = text
+            for match in matches {
+                let range = Range(match.range, in: new)!
+                new.replaceSubrange(range, with: Array(repeating: "*", count: match.range.length))
+            }
+            
+            return new
+        } catch {
+            return ""
+        }
+    }
+    
+    private func regex() throws -> NSRegularExpression {
+        
+        let escapedPattern = { (text: String) -> String in
+            "(\(NSRegularExpression.escapedPattern(for: text)))"
+        }
+        
+        let profanities = getProfanityList()
+            .map(escapedPattern)
+            .joined(separator: "|")
+        
+       return try NSRegularExpression(
+            pattern: "[^!@#$%^&*]*\(profanities)[^!@#$%^&*]*",
+            options: [.caseInsensitive])
     }
     
     private func getProfanityList() -> [String] {

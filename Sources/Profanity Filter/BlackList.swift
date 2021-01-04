@@ -1,9 +1,10 @@
 
+
 import Foundation
 
-struct BlackList {
+public struct BlackList {
     
-    static let defaultList: [String] = [
+    public static let defaultList: [String] = [
         "2 girls 1 cup",
         "2 girls one cup",
         "2g1c",
