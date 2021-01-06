@@ -15,6 +15,13 @@ final class ProfanityFilterTests: XCTestCase {
         XCTAssertTrue(result.profanities.contains("SHIT"))
     }
     
+    func testFindMultipleProfanities() {
+        let result = ProfanityFilter().containsProfanity(text: "SHIT FUCK")
+        XCTAssertTrue(result.containsProfanity)
+        XCTAssertTrue(result.profanities.contains("SHIT"))
+        XCTAssertTrue(result.profanities.contains("FUCK"))
+    }
+    
     func testFindMultiWord() {
         let result = ProfanityFilter().containsProfanity(text: "shithappenspoop")
         XCTAssertTrue(result.containsProfanity)

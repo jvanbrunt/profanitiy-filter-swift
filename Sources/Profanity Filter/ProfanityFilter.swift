@@ -46,7 +46,7 @@ public class ProfanityFilter {
     private func regex() throws -> NSRegularExpression {
         
         let escapedPattern = { (text: String) -> String in
-            "(\(NSRegularExpression.escapedPattern(for: text)))"
+            "\\b(\(NSRegularExpression.escapedPattern(for: text)))\\b"
         }
         
         let profanities = getProfanityList()
